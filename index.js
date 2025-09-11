@@ -1,65 +1,66 @@
-const texto = 'o nilsinho vai passar todo mundo'.toUpperCase();
-const senha = 'bolo'.toUpperCase().split( '' ).sort().join( '' );
-const carcaterDePreenchimento = '*';
+function transposicao(texto, senha) {
+  const numColunas = senha.length;
+  const numLinhas = Math.ceil(texto.length / numColunas);
+  const totalCaracteres = numLinhas * numColunas;
 
+  texto = texto.padEnd(totalCaracteres, "*");
 
-function transpor( texto , senha ){
-    const tamanhoTexto = texto.length;
-    const tamanhoSenha = senha.length;
-    const linhas = tamanhoTexto / tamanhoSenha;
-    const resto = tamanhoSenha - tamanhoTexto % tamanhoSenha;
-    console.log( resto )
+  const matriz = [];
+  for (let i = 0; i < numLinhas; i++) {
+    matriz.push(texto.substr(i * numColunas, numColunas).split(""));
+  }
 
+  const ordemColunas = [];
+  const senhaOrdenada = senha
+    .split("")
+    .map((char, i) => [char, i])
+    .sort();
+  senhaOrdenada.forEach(([_, i]) => ordemColunas.push(i));
 
-    if ( resto !== 0 )
-        texto += carcaterDePreenchimento.repeat( resto );
-
-
-    const pedacos = [];
-    for ( let i = 0; i < linhas; i++ )
-        pedacos.push( texto.slice( i * tamanhoSenha, i * tamanhoSenha + tamanhoSenha ) )
-
-
-    console.log( 'pedaços', pedacos )
-
-
-    const m = [ senha.split( '' ) ];
-    console.log( 'm inicial', m )
-
-
-    for ( let i = 1; i < linhas; i++ ) {
-        m.push( pedacos[ i ].split( '' ) );
+  let resultado = "";
+  for (let col of ordemColunas) {
+    for (let i = 0; i < numLinhas; i++) {
+      resultado += matriz[i][col];
     }
+  }
 
-
-    console.log( 'm preenchida', m );
-
-
-    const transposta = [];
-
-
-    for ( let i = 0; i < linhas; i++ ) {
-        transposta.push( [] )
-        for ( let j = 0; j < tamanhoSenha; j++ )
-            transposta[ i ].push( m[ i ][ j ] );
-    }
-
-
-    console.log( 'transposta', transposta )
-
-
-    let textoTransposto = '';
-    for ( let linha of transposta ) {
-        linha.shift();
-        textoTransposto += linha.join( '' );
-    }
-
-
-    console.log( textoTransposto )
+  return resultado;
 }
 
+function vigenere(texto, senha, decifrar = false) {
+  const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-*";
+  const n = alfabeto.length;
+  let resultado = "";
 
-transpor( texto, senha );
+  for (let i = 0; i < texto.length; i++) {
+    const charTexto = texto[i];
+    const charSenha = senha[i % senha.length];
 
+    const idxTexto = alfabeto.indexOf(charTexto);
+    const idxSenha = alfabeto.indexOf(charSenha);
 
- 
+    let novoIdx;
+    if (decifrar) novoIdx = (idxTexto - idxSenha + n) % n;
+    else novoIdx = (idxTexto + idxSenha) % n;
+    resultado += alfabeto[novoIdx];
+  }
+
+  return resultado;
+}
+
+function cifrar(texto, senha) {
+  return vigenere(transposicao(texto, senha), senha);
+}
+
+function decifrar(texto, senha) {
+  // return transposicao(vigenere(texto, senha, true), senha, true);
+}
+
+const texto = "o nilsinho vai passar todo mundo"
+  .toUpperCase()
+  .replace(/\s/g, "-");
+const senha = "intervalo".toUpperCase();
+
+const test = cifrar(texto, senha);
+console.log(test);
+console.log(vigenere(test, senha, true));
