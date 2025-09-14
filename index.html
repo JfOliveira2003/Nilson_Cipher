@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encriptador e decriptador de texto</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Encriptador e decriptador de texto</h1>
+    <form autocomplete="off">
+      <div class="field">
+        <input type="text" id="senha" name="senha" placeholder=" " required />
+        <label for="senha">Senha</label>
+      </div>
+      <div class="field">
+        <input type="text" id="texto" name="texto" placeholder=" " required />
+        <label for="texto">Texto</label>
+      </div>
+      <div id="buttons">
+        <input type="button" value="Criptografar" id="cript" />
+        <input type="button" value="Descriptografar" id="decript" />
+      </div>
+      <div id="error" class="error hide" aria-live="polite"></div>
+      <div id="resultado" class="resultado hide" hidden>
+        <div class="resultado-header">
+          <h2 id="resultado-titulo"></h2>
+          <button type="button" id="copiar" title="Copiar resultado">
+            Copiar
+          </button>
+        </div>
+        <pre id="resultado-texto" class="resultado-texto"></pre>
+      </div>
+    </form>
+
+    <footer>
+      Denis Albertini, Fabrício José de Oliveira e Kauã Villa Nova
+    </footer>
+  </body>
+</html>
