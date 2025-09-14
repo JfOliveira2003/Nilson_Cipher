@@ -1,0 +1,223 @@
+:root {
+  --bg-dark: #111111;
+  --grey: #222222;
+  --text-light: #ffffff;
+  --primary: #03dac5;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20vh;
+  margin-bottom: 2vh;
+}
+form {
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  margin: auto;
+  gap: 20px;
+}
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.field input[type="text"] {
+  width: 100%;
+  border: 2px solid var(--grey);
+  background: var(--grey);
+  color: var(--text-light);
+  padding: 18px 12px 8px 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.field input[type="text"]:focus {
+  border-color: var(--primary);
+}
+
+.field label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #bbb;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background: transparent;
+  padding: 0 4px;
+}
+
+.field input[type="text"]:focus + label,
+.field input[type="text"]:not(:placeholder-shown) + label {
+  top: 6px;
+  font-size: 0.65rem;
+  color: var(--primary);
+}
+
+input[type="button"] {
+  width: 49%;
+  border: none;
+  background-color: var(--primary);
+  color: var(--bg-dark);
+  padding: 12px 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.15s ease;
+}
+input[type="button"]:hover {
+  background-color: var(--text-light);
+}
+input[type="button"]:active {
+  transform: scale(0.97);
+}
+.hide {
+  display: none;
+}
+#buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 2%;
+}
+output {
+  min-height: 60px;
+  border: 2px solid var(--grey);
+  background: var(--grey);
+  padding: 12px;
+  border-radius: 10px;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+.resultado {
+  border: 2px solid var(--grey);
+  background: #181818;
+  padding: 16px 16px 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.resultado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.resultado-header h2 {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+#copiar {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background 0.25s, color 0.25s;
+}
+#copiar:hover {
+  background: var(--primary);
+  color: #000;
+}
+.resultado-texto {
+  margin: 0;
+  font-family: monospace;
+  font-size: 0.85rem;
+  line-height: 1.3rem;
+  max-height: 240px;
+  overflow: auto;
+  background: #101010;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #2c2c2c;
+  scrollbar-width: thin;
+}
+.resultado-texto::-webkit-scrollbar {
+  width: 8px;
+}
+.resultado-texto::-webkit-scrollbar-track {
+  background: #101010;
+}
+.resultado-texto::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 4px;
+}
+.resultado-texto::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+.warning {
+  color: #222;
+  background: #fdea50;
+  border-color: #f5d300;
+  font-weight: 600;
+}
+.error {
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: #3b1d1d;
+  border: 1px solid #ff5d5d;
+  color: #ffb3b3;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.1rem;
+  font-family: system-ui, sans-serif;
+  white-space: pre-wrap;
+  animation: fadeIn 0.25s ease;
+}
+.error strong {
+  color: #ff8080;
+}
+.hide {
+  display: none !important;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 0.8rem;
+  background-color: var(--grey);
+}
+
+@media screen and (max-width: 600px) {
+  form {
+    width: 90%;
+  }
+}
