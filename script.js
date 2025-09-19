@@ -152,62 +152,21 @@ if (copiarBtn) {
   });
 }
 
-function transposicao(texto, senha, decifrar = false) {
-  const numColunas = senha.length;
-  const ordemColunas = senha
-    .split("")
-    .map((c, i) => [c, i])
-    .sort((a, b) => a[0].localeCompare(b[0]) || a[1] - b[1])
-    .map(([, i]) => i);
-
-  if (!decifrar) {
-    const numLinhas = Math.ceil(texto.length / numColunas);
-    texto = texto.padEnd(numLinhas * numColunas, "*");
-    const matriz = [];
-    for (let i = 0; i < numLinhas; i++)
-      matriz.push(texto.substr(i * numColunas, numColunas).split(""));
-    let out = "";
-    for (let col of ordemColunas)
-      for (let r = 0; r < numLinhas; r++) out += matriz[r][col];
-    return out;
-  } else {
-    const numLinhas = Math.ceil(texto.length / numColunas);
-    const matriz = Array.from({ length: numLinhas }, () => Array(numColunas));
-    let off = 0;
-    for (let k = 0; k < ordemColunas.length; k++) {
-      const colOriginal = ordemColunas[k];
-      const trecho = texto.slice(off, off + numLinhas);
-      for (let r = 0; r < numLinhas; r++) matriz[r][colOriginal] = trecho[r];
-      off += numLinhas;
-    }
-    let plano = "";
-    for (let r = 0; r < numLinhas; r++) plano += matriz[r].join("");
-    return plano.replace(/\*+$/g, "");
-  }
-}
-
-// function transporDecript(texto, senha) {}
-
-function vigenere(texto, senha, decifrar = false) {
-  const alfabeto =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 \\" + "*";
-  const n = alfabeto.length;
-  let resultado = "";
-
-  for (let i = 0; i < texto.length; i++) {
-    const charTexto = texto[i];
-    const charSenha = senha[i % senha.length];
-
-    const idxTexto = alfabeto.indexOf(charTexto);
-    const idxSenha = alfabeto.indexOf(charSenha);
-
-    let novoIdx;
-    if (decifrar) novoIdx = (idxTexto - idxSenha + n) % n;
-    else novoIdx = (idxTexto + idxSenha) % n;
-    console.log("Novo idx", novoIdx);
-    console.log("Novo char", alfabeto[novoIdx]);
-    resultado += alfabeto[novoIdx];
-  }
-
-  return resultado;
-}
+/**
+ * O app retorna o texto criptografado em base64.
+ * Essa string precisa ser retornada para seu formato binário
+ * para exibir os caracteres estranhos e sem representação.
+ * Como? Eu não sei.
+ * 
+ * Para requisitar a descriptografia, você deve enviar no corpo
+ * o mesmo texto em base64 que retornou da criptografia.
+ * 
+ * O método suporta os seguintes algoritmos que eu testei:
+ * - aes-128-cbc
+ * - aes-192-cbc
+ * - aes-256-cbc
+ * - des-ede-cbc
+ * - des-ede3-cbc
+ * Estes podem ser incluídos num select. Caso queira incluir outros,
+ * teste primeiro.
+ */

@@ -1,0 +1,26 @@
+{
+  "name": "nilson_cipher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "start": "node app/app.js",
+    "start:dev": "nodemon app/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JfOliveira2003/Nilson_Cipher.git"
+  },
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/JfOliveira2003/Nilson_Cipher/issues"
+  },
+  "homepage": "https://github.com/JfOliveira2003/Nilson_Cipher#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "openssl-nodejs": "^1.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
