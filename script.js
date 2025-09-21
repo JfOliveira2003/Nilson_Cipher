@@ -3,9 +3,9 @@ const isLocalEnv =
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1";
 const backendBase = isLocalEnv
-  ? "http://localhost:3000"
-  : window.location.origin;
-const backendUrl = `${backendBase}/app`;
+  ? "http://localhost:3000/app"
+  : `${window.location.origin}/api`;
+const backendUrl = backendBase;
 const algorithm = "des-ede-cbc"; // deve ser o mesmo do backend
 const textoInput = document.querySelector("#texto");
 const senhaInput = document.querySelector("#senha");
