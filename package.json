@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/JfOliveira2003/Nilson_Cipher#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "openssl-nodejs": "^1.0.5"
   },

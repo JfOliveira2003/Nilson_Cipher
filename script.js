@@ -1,3 +1,12 @@
+const isLocalEnv =
+  window.location.protocol === "file:" ||
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+const backendBase = isLocalEnv
+  ? "http://localhost:3000"
+  : window.location.origin;
+const backendUrl = `${backendBase}/app`;
+const algorithm = "des-ede-cbc"; // deve ser o mesmo do backend
 const textoInput = document.querySelector("#texto");
 const senhaInput = document.querySelector("#senha");
 
@@ -14,12 +23,13 @@ criptBtn.addEventListener("click", criptografar);
 decriptBtn.addEventListener("click", decifrar);
 
 // Regras de caracteres:
-// Permitidos no algoritmo: letras A-Z e a-z, dígitos 0-9, espaço, barra invertida \\ e asterisco * (este último usado como padding interno)
-// Qualquer letra com acento (á, ê, õ, ç, ü etc.) ou caractere especial fora desse conjunto deverá disparar um aviso.
+// Permitidos no algoritmo: letras A-Z e a-z, dígitos 0-9, espaço, barra invertida \\ e asterisco * (este último usado como padding interno),
+// além dos caracteres do Base64: +, / e = (para suportar colar o texto cifrado).
+// Qualquer letra com acento ou caractere especial fora desse conjunto deverá disparar um aviso.
 // Regex para encontrar caracteres não permitidos (captura primeiro caractere inválido para mensagem):
-const REGEX_NAO_PERMITIDO = /[^A-Za-z0-9 \\*]/u; // inclui tudo fora do set básico
+const REGEX_NAO_PERMITIDO = /[^A-Za-z0-9 \+\/=\\\*]/u; // inclui tudo fora do set básico + Base64 (+,/ ,=)
 // Regex específica para detectar letras acentuadas (intervalos Unicode comuns em PT-BR):
-const REGEX_ACENTO = /[\u00C0-\u00FF]/u; // Latin-1 Supplement (inclui ç, ñ, ÿ etc.)
+const REGEX_ACENTO = /[\u00C0-\u00FF]/u;
 
 let clearWarningHandler = null;
 function showError(msg) {
@@ -75,7 +85,7 @@ function validarEntrada(e) {
       ? matchNaoPermitido[0]
       : valor.match(REGEX_ACENTO)[0];
     mostrarWarning(
-      `Caractere inválido detectado: "${parteProblema}". Use apenas letras sem acento, números, espaço e \\ (barra invertida).`
+      `Caractere inválido detectado: "${parteProblema}". Use apenas letras sem acento, números, espaço, +, /, = e \\ (barra invertida).`
     );
   } else {
     limparWarningSeNecessario();
@@ -98,14 +108,28 @@ function receberValores() {
   return { texto, senha };
 }
 
-function criptografar() {
+async function criptografar() {
   try {
     const valores = receberValores();
     if (!valores) return;
     clearError();
     const { texto, senha } = valores;
-    const transp = transposicao(texto, senha);
-    exibirResultado("Texto encriptado", vigenere(transp, senha));
+    const textoEncriptado = await fetch(`${backendUrl}/encrypt`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: texto,
+        password: senha,
+        algorithm: algorithm,
+      }),
+    }).then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    });
+    exibirResultado("Texto encriptado", textoEncriptado.encrypted || "");
   } catch (err) {
     showError(
       `Erro ao criptografar: ${err instanceof Error ? err.message : err}`
@@ -113,14 +137,26 @@ function criptografar() {
   }
 }
 
-function decifrar() {
+async function decifrar() {
   try {
     const valores = receberValores();
     if (!valores) return;
     clearError();
     const { texto, senha } = valores;
-    const vig = vigenere(texto, senha, true);
-    exibirResultado("Texto decriptado", transposicao(vig, senha, true));
+    const resposta = await fetch(`${backendUrl}/decrypt`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: texto, // deve ser o base64 retornado pela criptografia
+        password: senha,
+        algorithm: algorithm,
+      }),
+    }).then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    });
+    exibirResultado("Texto decriptado", resposta.decrypted || "");
   } catch (err) {
     showError(
       `Erro ao descriptografar: ${err instanceof Error ? err.message : err}`
@@ -151,22 +187,3 @@ if (copiarBtn) {
     });
   });
 }
-
-/**
- * O app retorna o texto criptografado em base64.
- * Essa string precisa ser retornada para seu formato binário
- * para exibir os caracteres estranhos e sem representação.
- * Como? Eu não sei.
- * 
- * Para requisitar a descriptografia, você deve enviar no corpo
- * o mesmo texto em base64 que retornou da criptografia.
- * 
- * O método suporta os seguintes algoritmos que eu testei:
- * - aes-128-cbc
- * - aes-192-cbc
- * - aes-256-cbc
- * - des-ede-cbc
- * - des-ede3-cbc
- * Estes podem ser incluídos num select. Caso queira incluir outros,
- * teste primeiro.
- */

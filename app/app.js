@@ -1,10 +1,24 @@
 import express from "express";
+import cors from "cors";
 import cypherTransposicao from "./src/transposicao.js";
 import cypherVigenere from "./src/vigenere.js";
 import cypherOpenssl from "./src/openssl.js";
 
 const app = express();
 const PORT = 3000;
+
+// CORS: allow requests from the browser client (adjust origin if you host elsewhere)
+app.use(
+  cors({
+    origin: "*", // allow all origins (safe since credentials are false)
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false,
+  })
+);
+
+// Handle preflight (Express 5: use regex instead of "*")
+app.options(/.*/, cors());
 
 app.use(express.json());
 
